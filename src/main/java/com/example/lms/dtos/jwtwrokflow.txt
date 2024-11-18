@@ -1,0 +1,19 @@
+1. Add dependency(io.jsonwebtoken)
+
+2. Create JWT authenticationEntryPoint implements AuthenticationEntryPoint
+
+3.Create JWTTokenHelper
+4. JwtAuthenticationFilter  extends OnceRequestFilter                   
+	a) Step 1: Extract Token and Username from Request Header
+	b) Step 2: Check if Username is not null and Authentication has not been set
+	c) Step 3: Load UserDetails from Database
+	d) Step 4: Validate Token against UserDetails
+	e) Step 5: Set up Spring Security Authentication
+
+5. Create JwtAuthResponse
+
+6. Configure JWT in spring security config
+
+7. Create login  api to return token
+
+8. Test the application.
