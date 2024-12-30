@@ -11,14 +11,61 @@ import com.example.lms.exceptions.AuthorNotFoundException;
 import com.example.lms.model.Author;
 import com.example.lms.model.Book;
 import com.example.lms.repository.AuthorRepository;
+import com.example.lms.repository.BookRepository;
 import com.example.lms.service.BookService;
 
+//@Service
+//public class BookServiceImpl implements BookService {
+//
+//    // Injecting the AuthorRepository to interact with the database
+//    @Autowired
+//    private AuthorRepository authorRepo;
+//
+//    @Override
+//    public BookResponseDto addBook(BookRequestDto bookRequestDto) {
+//        // Fetch the Author entity based on the ID from the BookDto
+//        Optional<Author> authorOptional = authorRepo.findById(bookRequestDto.getAuthorId());
+//        if (authorOptional.isPresent()) {
+//            Author author = authorOptional.get();
+//
+//            // Create a new Book entity and set its attributes using the data from BookDto
+//            Book book = new Book();
+//            book.setTitle(bookRequestDto.getTitle());
+//            book.setGenre(bookRequestDto.getGenre());
+//            book.setPrice(bookRequestDto.getPrice());
+//            book.setGenre(bookRequestDto.getGenre());
+//            book.setIssued(false); // Initial state: Not issued
+//            book.setAuthor(author);
+//
+//            // Add the newly created book to the author's list of books
+//            author.getBooks().add(book);
+//            
+//            // Save the updated Author entity to the database
+//            authorRepo.save(author);
+//
+//            // Create a new BookDto for the response
+//            BookResponseDto bookResponseDto = new BookResponseDto();
+//            bookResponseDto.setId(book.getId());
+//            bookResponseDto.setTitle(book.getTitle());
+//            bookResponseDto.setPrice(book.getPrice());
+//            bookResponseDto.setGenre(book.getGenre());
+//
+//            // Return the BookDto representing the newly added book
+//            return bookResponseDto;
+//        } else {
+//            // Handle author not found
+//            throw new AuthorNotFoundException("Author not found");
+//        }
+//    }
+//}
 @Service
 public class BookServiceImpl implements BookService {
 
-    // Injecting the AuthorRepository to interact with the database
     @Autowired
     private AuthorRepository authorRepo;
+
+    @Autowired
+    private BookRepository bookRepo;  // Inject the BookRepository
 
     @Override
     public BookResponseDto addBook(BookRequestDto bookRequestDto) {
@@ -32,19 +79,18 @@ public class BookServiceImpl implements BookService {
             book.setTitle(bookRequestDto.getTitle());
             book.setGenre(bookRequestDto.getGenre());
             book.setPrice(bookRequestDto.getPrice());
-            book.setGenre(bookRequestDto.getGenre());
             book.setIssued(false); // Initial state: Not issued
             book.setAuthor(author);
 
             // Add the newly created book to the author's list of books
             author.getBooks().add(book);
-            
-            // Save the updated Author entity to the database
-            authorRepo.save(author);
+
+            // Save the book entity to the database (this will generate the ID)
+            bookRepo.save(book);  // Save the book to the database
 
             // Create a new BookDto for the response
             BookResponseDto bookResponseDto = new BookResponseDto();
-            bookResponseDto.setId(book.getId());
+            bookResponseDto.setId(book.getId());  // The ID will be set after saving
             bookResponseDto.setTitle(book.getTitle());
             bookResponseDto.setPrice(book.getPrice());
             bookResponseDto.setGenre(book.getGenre());

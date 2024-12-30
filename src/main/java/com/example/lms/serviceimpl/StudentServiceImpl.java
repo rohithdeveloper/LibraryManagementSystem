@@ -1,5 +1,7 @@
 package com.example.lms.serviceimpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,86 +27,77 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private CardRepository libraryCardRepository;
 
-	 @Override
-	    public StudentResponseDto addStudent(StudentRequestDto studentDto) {
-	        // Create a new Student entity and set its properties from the DTO
-	        Student student = new Student();
-	        student.setSname(studentDto.getSname());
-	        student.setSage(studentDto.getSage());
-	        student.setDepartment(studentDto.getDepartment());
-	        student.setEmail(studentDto.getEmail());
+	@Override
+	public StudentResponseDto addStudent(StudentRequestDto studentDto) {
+		// Create a new Student entity and set its properties from the DTO
+		Student student = new Student();
+		student.setSname(studentDto.getSname());
+		student.setSage(studentDto.getSage());
+		student.setDepartment(studentDto.getDepartment());
+		student.setEmail(studentDto.getEmail());
 
-	        // Create a new LibraryCard entity and set its properties
-	        LibraryCard libraryCard = new LibraryCard();
-	        libraryCard.setStatus(CardStatus.ACTIVATED);
-	        libraryCard.setStudent(student); // Link the card with the student
-	        student.setCard(libraryCard); // Link the student with the card
+		// Create a new LibraryCard entity and set its properties
+		LibraryCard libraryCard = new LibraryCard();
+		libraryCard.setStatus(CardStatus.ACTIVATED);
+		libraryCard.setStudent(student); // Link the card with the student
+		student.setCard(libraryCard); // Link the student with the card
 
-	        // Save the student (and the associated library card) to the database
-	        // Ensure libraryCard is saved after student to maintain FK constraints
-	        Student savedStudent = studentRepository.save(student);
+		// Save the student (and the associated library card) to the database
+		// Ensure libraryCard is saved after student to maintain FK constraints
+		Student savedStudent = studentRepository.save(student);
 
-	        // Create a StudentDto to return as the response
+		// Create a StudentDto to return as the response
+		StudentResponseDto studentResponseDto = new StudentResponseDto();
+		studentResponseDto.setSId(savedStudent.getSId());
+		studentResponseDto.setSname(savedStudent.getSname());
+		studentResponseDto.setDepartment(savedStudent.getDepartment());
+		studentResponseDto.setEmail(savedStudent.getEmail());
+		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Set card ID in response DTO
+
+		return studentResponseDto;
+	}
+
+	@Override
+	public void updateEmail(StudentUpdateEmailRequestDto studentUpdateEmailRequestDto) {
+		// Retrieve the student entity from the database using the provided student ID
+		Optional<Student> optionalStudent = studentRepository.findById(studentUpdateEmailRequestDto.getSId());
+
+		// Use Optional to handle the presence or absence of the student entity
+		if (optionalStudent.isPresent()) {
+			Student student = optionalStudent.get();
+
+			// Update the student's email address with the new value from the DTO
+			student.setEmail(studentUpdateEmailRequestDto.getEmail());
+			studentRepository.save(student);
+		} else {
+			throw new StudentNotfoundException("Student not found");
+		}
+	}
+
+	@Override
+	public List<StudentResponseDto> getAllStudents() {
+	    // Fetch all students from the repository
+	    List<Student> students = studentRepository.findAll();
+	    List<StudentResponseDto> studentResponseDtos = new ArrayList<>();
+
+	    // Iterate through each student and create a StudentResponseDto
+	    for (Student student : students) {
 	        StudentResponseDto studentResponseDto = new StudentResponseDto();
-	        studentResponseDto.setSId(savedStudent.getSId());
-	        studentResponseDto.setSname(savedStudent.getSname());
-	        studentResponseDto.setDepartment(savedStudent.getDepartment());
-	        studentResponseDto.setEmail(savedStudent.getEmail());
-	        studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Set card ID in response DTO
-
-	        return studentResponseDto;
+	        studentResponseDto.setSId(student.getSId());
+	        studentResponseDto.setSname(student.getSname());
+	        studentResponseDto.setDepartment(student.getDepartment());
+	        studentResponseDto.setEmail(student.getEmail());
+	        studentResponseDto.setCardId(student.getCard().getCardno());
+	        
+	        // Add the StudentResponseDto to the response list
+	        studentResponseDtos.add(studentResponseDto);
 	    }
-	 
 
-//	 @Override
-//	 public StudentResponseDto updateEmail(StudentUpdateEmailRequestDto studentUpdateEmailRequestDto) {
-//	     // Retrieve the student entity from the database using the provided student ID
-//	     Optional<Student> optionalStudent = studentRepository.findById(studentUpdateEmailRequestDto.getSId());
-//
-//	     // Use Optional to handle the presence or absence of the student entity
-//	     if (optionalStudent.isPresent()) {
-//	         Student student = optionalStudent.get();
-//
-//	         // Update the student's email address with the new value from the DTO
-//	         student.setEmail(studentUpdateEmailRequestDto.getEmail());
-//
-//	         // Save the updated student entity back to the database
-//	         Student savedStudent = studentRepository.save(student);
-//
-//	         // Create a new StudentResponseDto to return the updated student information
-//	         StudentResponseDto studentResponseDto = new StudentResponseDto();
-//	         studentResponseDto.setSId(savedStudent.getSId());
-//	         studentResponseDto.setSname(savedStudent.getSname());
-//	         studentResponseDto.setDepartment(savedStudent.getDepartment());
-//	         studentResponseDto.setEmail(savedStudent.getEmail());
-//
-//	         // Return the DTO with the updated student information
-//	         return studentResponseDto;
-//	     } else {
-//	         // Handle the case where the student was not found
-//	         throw new StudentNotfoundException("Student not found");
-//	     }
-//	 }
-
-	 @Override
-	 public void updateEmail(StudentUpdateEmailRequestDto studentUpdateEmailRequestDto) {
-	     // Retrieve the student entity from the database using the provided student ID
-	     Optional<Student> optionalStudent = studentRepository.findById(studentUpdateEmailRequestDto.getSId());
-
-	     // Use Optional to handle the presence or absence of the student entity
-	     if (optionalStudent.isPresent()) {
-	         Student student = optionalStudent.get();
-
-	         // Update the student's email address with the new value from the DTO
-	         student.setEmail(studentUpdateEmailRequestDto.getEmail());
-	         studentRepository.save(student);
-	     }
-	     else {
-	    	 throw new StudentNotfoundException("Student not found");
-	     }
-	 }
-	
+	    // Return the list of StudentResponseDto
+	    return studentResponseDtos;
+	}
 
 	
+	
+
 }
-
