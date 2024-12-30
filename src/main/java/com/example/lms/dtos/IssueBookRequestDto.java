@@ -1,5 +1,7 @@
 package com.example.lms.dtos;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class IssueBookRequestDto {
-    private int cardId;
-    private int bookId;
+	private UUID cardId;
+	private int bookId;
 }

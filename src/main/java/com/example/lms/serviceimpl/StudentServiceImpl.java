@@ -27,6 +27,36 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private CardRepository libraryCardRepository;
 
+//	@Override
+//	public StudentResponseDto addStudent(StudentRequestDto studentDto) {
+//		// Create a new Student entity and set its properties from the DTO
+//		Student student = new Student();
+//		student.setSname(studentDto.getSname());
+//		student.setSage(studentDto.getSage());
+//		student.setDepartment(studentDto.getDepartment());
+//		student.setEmail(studentDto.getEmail());
+//
+//		// Create a new LibraryCard entity and set its properties
+//		LibraryCard libraryCard = new LibraryCard();
+//		libraryCard.setStatus(CardStatus.ACTIVATED);
+//		libraryCard.setStudent(student); // Link the card with the student
+//		student.setCard(libraryCard); // Link the student with the card
+//
+//		// Save the student (and the associated library card) to the database
+//		// Ensure libraryCard is saved after student to maintain FK constraints
+//		Student savedStudent = studentRepository.save(student);
+//
+//		// Create a StudentDto to return as the response
+//		StudentResponseDto studentResponseDto = new StudentResponseDto();
+//		studentResponseDto.setSId(savedStudent.getSId());
+//		studentResponseDto.setSname(savedStudent.getSname());
+//		studentResponseDto.setDepartment(savedStudent.getDepartment());
+//		studentResponseDto.setEmail(savedStudent.getEmail());
+//		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Set card ID in response DTO
+//
+//		return studentResponseDto;
+//	}
+
 	@Override
 	public StudentResponseDto addStudent(StudentRequestDto studentDto) {
 		// Create a new Student entity and set its properties from the DTO
@@ -52,7 +82,9 @@ public class StudentServiceImpl implements StudentService {
 		studentResponseDto.setSname(savedStudent.getSname());
 		studentResponseDto.setDepartment(savedStudent.getDepartment());
 		studentResponseDto.setEmail(savedStudent.getEmail());
-		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Set card ID in response DTO
+
+		// Set card ID as UUID in response DTO (cardno is now UUID)
+		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Get UUID from LibraryCard
 
 		return studentResponseDto;
 	}
@@ -76,28 +108,25 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public List<StudentResponseDto> getAllStudents() {
-	    // Fetch all students from the repository
-	    List<Student> students = studentRepository.findAll();
-	    List<StudentResponseDto> studentResponseDtos = new ArrayList<>();
+		// Fetch all students from the repository
+		List<Student> students = studentRepository.findAll();
+		List<StudentResponseDto> studentResponseDtos = new ArrayList<>();
 
-	    // Iterate through each student and create a StudentResponseDto
-	    for (Student student : students) {
-	        StudentResponseDto studentResponseDto = new StudentResponseDto();
-	        studentResponseDto.setSId(student.getSId());
-	        studentResponseDto.setSname(student.getSname());
-	        studentResponseDto.setDepartment(student.getDepartment());
-	        studentResponseDto.setEmail(student.getEmail());
-	        studentResponseDto.setCardId(student.getCard().getCardno());
-	        
-	        // Add the StudentResponseDto to the response list
-	        studentResponseDtos.add(studentResponseDto);
-	    }
+		// Iterate through each student and create a StudentResponseDto
+		for (Student student : students) {
+			StudentResponseDto studentResponseDto = new StudentResponseDto();
+			studentResponseDto.setSId(student.getSId());
+			studentResponseDto.setSname(student.getSname());
+			studentResponseDto.setDepartment(student.getDepartment());
+			studentResponseDto.setEmail(student.getEmail());
+			studentResponseDto.setCardId(student.getCard().getCardno());
 
-	    // Return the list of StudentResponseDto
-	    return studentResponseDtos;
+			// Add the StudentResponseDto to the response list
+			studentResponseDtos.add(studentResponseDto);
+		}
+
+		// Return the list of StudentResponseDto
+		return studentResponseDtos;
 	}
-
-	
-	
 
 }
