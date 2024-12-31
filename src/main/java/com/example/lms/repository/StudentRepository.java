@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.example.lms.model.Student;
 
+import java.util.UUID;
+
 @Repository
-public interface StudentRepository extends JpaRepository<Student,Integer> {
+public interface StudentRepository extends JpaRepository<Student, UUID> {
 
 //	Optional<Student> findByName(String name);
 }
