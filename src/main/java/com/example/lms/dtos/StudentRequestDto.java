@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentRequestDto {
-    private int sId;
+    //private int sId;
     private String sname;
     private int sage;
     private Department department;
