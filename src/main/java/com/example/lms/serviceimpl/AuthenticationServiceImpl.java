@@ -26,6 +26,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private PasswordEncoder passEncoder;
 
+    @Autowired
+    private EmailServiceImpl emailService;
+
     @Override
     public String signup(RegisterUserDto input) {
         // Check if the user already exists
@@ -40,6 +43,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRole(input.getRole());
         user.setPassword(passEncoder.encode(input.getPassword()));
         userRepo.save(user);
+
+        // Send email dynamically after successful registration
+        String subject = "Welcome to Our Platform!";
+        String text = "Dear " + input.getFullName() + ",\n\nThank you for registering. We are excited to have you on board!\n\nBest Regards,\nYour Company";
+
+        // Assuming you want to send an email from your own SMTP configuration, pass those details here
+        emailService.sendEmail(
+                "smtp.gmail.com",  // SMTP host
+                "587",              // SMTP port
+                "rohithparimella724@gmail.com", // Your email
+                "wtsr wnev cwhs hzkq",  // Your email password (or app password)  Note : This password varies from PC's
+                input.getEmail(),       // Recipient's email
+                subject,                // Subject of the email
+                text                    // Email body
+        );
+
+
         if ("ROLE_ADMIN".equalsIgnoreCase(input.getRole())) {
             return "Admin registered successfully";
         } else {
@@ -49,17 +69,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserInfo authenticate(LoginUserDto input) {
-    	authManager.authenticate(
+        authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getFullName(),
                         input.getPassword()
                 )
         );
 
-    	return userRepo.findByFullName(input.getFullName())
+        return userRepo.findByFullName(input.getFullName())
                 .orElseThrow();
     }
-    
+
     public List<UserInfo> allUsers() {
         return userRepo.findAll();
     }
