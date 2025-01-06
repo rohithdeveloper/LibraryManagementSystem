@@ -34,7 +34,7 @@ public class LibraryManagementSystemApplication implements CommandLineRunner {
 		bookRequestDto.setTitle("The Great Adventure");
 		bookRequestDto.setGenre(Genre.BIOGRAPHY);
 		bookRequestDto.setPrice(200);
-		bookRequestDto.setAuthorId(3); // Adjust as per your database
+		bookRequestDto.setAuthorId(1); // Adjust as per your database
 
 
 		// Schedule tasks
