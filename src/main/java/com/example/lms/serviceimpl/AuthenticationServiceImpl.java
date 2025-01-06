@@ -17,50 +17,59 @@ import com.example.lms.repository.UserRepository;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Autowired
-    private UserRepository userRepo;
+	@Autowired
+	private UserRepository userRepo;
 
-    @Autowired
-    private AuthenticationManager authManager;
+	@Autowired
+	private AuthenticationManager authManager;
 
-    @Autowired
-    private PasswordEncoder passEncoder;
+	@Autowired
+	private PasswordEncoder passEncoder;
 
-    @Override
-    public String signup(RegisterUserDto input) {
-        // Check if the user already exists
-        if (userRepo.findByFullName(input.getFullName()).isPresent()) {
-            throw new RuntimeException("User already exists");
-        }
+	@Autowired
+	private EmailServiceImpl emailService;
 
-        // Create and save the new user
-        UserInfo user = new UserInfo();
-        user.setFullName(input.getFullName());
-        user.setEmail(input.getEmail());
-        user.setRole(input.getRole());
-        user.setPassword(passEncoder.encode(input.getPassword()));
-        userRepo.save(user);
-        if ("ROLE_ADMIN".equalsIgnoreCase(input.getRole())) {
-            return "Admin registered successfully";
-        } else {
-            return "User registered successfully";
-        }
-    }
+	@Override
+	public String signup(RegisterUserDto input) {
+		// Check if the user already exists
+		if (userRepo.findByFullName(input.getFullName()).isPresent()) {
+			throw new RuntimeException("User already exists");
+		}
 
-    @Override
-    public UserInfo authenticate(LoginUserDto input) {
-    	authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        input.getFullName(),
-                        input.getPassword()
-                )
-        );
+		// Create and save the new user
+		UserInfo user = new UserInfo();
+		user.setFullName(input.getFullName());
+		user.setEmail(input.getEmail());
+		user.setRole(input.getRole());
+		user.setPassword(passEncoder.encode(input.getPassword()));
+		userRepo.save(user);
 
-    	return userRepo.findByFullName(input.getFullName())
-                .orElseThrow();
-    }
-    
-    public List<UserInfo> allUsers() {
-        return userRepo.findAll();
-    }
+		String subject = "welcome to Library Management System";
+		String text = "Dear "+ input.getFullName() + " thankyou for registering";
+
+		String host = "smtp.gmail.com"; // Example with Gmail
+		String port = "587"; // Gmail SMTP port for TLS
+		String username = "rohithparimella724@gmail.com"; // Sender's email address
+		String password = "wtsr wnev cwhs hzkq"; // Sender's email password (or app-specific password)
+
+		// Send email
+		emailService.sendEmail(host, port, username, password, input.getEmail(), subject, text);
+
+		if ("ROLE_ADMIN".equalsIgnoreCase(input.getRole())) {
+			return "Admin registered successfully";
+		} else {
+			return "User registered successfully";
+		}
+	}
+
+	@Override
+	public UserInfo authenticate(LoginUserDto input) {
+		authManager.authenticate(new UsernamePasswordAuthenticationToken(input.getFullName(), input.getPassword()));
+
+		return userRepo.findByFullName(input.getFullName()).orElseThrow();
+	}
+
+	public List<UserInfo> allUsers() {
+		return userRepo.findAll();
+	}
 }
