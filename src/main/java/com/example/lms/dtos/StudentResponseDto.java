@@ -29,7 +29,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentResponseDto {
-    private int sId;
+    private UUID sId;
     private String sname;
     private Department department;
     private String email;

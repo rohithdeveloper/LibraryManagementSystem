@@ -1,46 +1,38 @@
 package com.example.lms.serviceimpl;
 
-import java.util.Properties;
-
+import com.example.lms.service.EmailService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
-import com.example.lms.service.EmailService;
+import java.util.Properties;
 
 @Service
-public class EmailServiceImpl implements EmailService {
- 
-	public void sendEmail(String host, String port, String username, String password, String toEmail , String subject, String text) {
-		JavaMailSenderImpl mailSender=new JavaMailSenderImpl();
-		
-		// Set SMTP server details
-	    mailSender.setHost(host);
-	    mailSender.setPort(Integer.parseInt(port));
-	    mailSender.setUsername(username);
-	    mailSender.setPassword(password);
+public class EmailServiceImpl implements EmailService{
 
-	    // Set JavaMailSender properties
-	    Properties properties = new Properties();
-	    properties.put("mail.smtp.auth", "true"); // Use authentication
-	    properties.put("mail.smtp.starttls.enable", "true"); // Enable TLS
-	    properties.put("mail.smtp.ssl.protocols", "TLSv1.2"); // Ensure secure protocol
-	    mailSender.setJavaMailProperties(properties);
+    @Override
+    public void sendEmail(String host, String port, String username, String password, String toEmail, String subject, String text) {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-	    // Create email message
-	    SimpleMailMessage message = new SimpleMailMessage();
-	    message.setFrom(username); // Set from address (usually the username)
-	    message.setTo(toEmail); // Set recipient's email address
-	    message.setSubject(subject); // Set email subject
-	    message.setText(text); // Set email body content
+        // Setting up the SMTP server details
+        mailSender.setHost(host);
+        mailSender.setPort(Integer.parseInt(port));
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
 
-	    // Send email
-	    try {
-	        mailSender.send(message);
-	        System.out.println("Email sent successfully to " + toEmail);
-	    } catch (Exception e) {
-	        System.out.println("Error sending email: " + e.getMessage());
-	        e.printStackTrace();
-	    }
-	}
+        // Set up mail server properties
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        // Creating the email message
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(username);  // Sender's email
+        message.setTo(toEmail);     // Recipient's email
+        message.setSubject(subject);  // Subject of the email
+        message.setText(text);        // Body content of the email
+
+        // Send the email
+        mailSender.send(message);
+    }
 }

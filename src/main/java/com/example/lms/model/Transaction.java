@@ -58,4 +58,5 @@ import lombok.Setter;
 		@ManyToOne
 		@JoinColumn
 		LibraryCard card;
+
 	}

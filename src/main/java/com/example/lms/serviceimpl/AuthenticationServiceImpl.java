@@ -17,59 +17,70 @@ import com.example.lms.repository.UserRepository;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-	@Autowired
-	private UserRepository userRepo;
+    @Autowired
+    private UserRepository userRepo;
 
-	@Autowired
-	private AuthenticationManager authManager;
+    @Autowired
+    private AuthenticationManager authManager;
 
-	@Autowired
-	private PasswordEncoder passEncoder;
+    @Autowired
+    private PasswordEncoder passEncoder;
 
-	@Autowired
-	private EmailServiceImpl emailService;
+    @Autowired
+    private EmailServiceImpl emailService;
 
-	@Override
-	public String signup(RegisterUserDto input) {
-		// Check if the user already exists
-		if (userRepo.findByFullName(input.getFullName()).isPresent()) {
-			throw new RuntimeException("User already exists");
-		}
+    @Override
+    public String signup(RegisterUserDto input) {
+        // Check if the user already exists
+        if (userRepo.findByFullName(input.getFullName()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
 
-		// Create and save the new user
-		UserInfo user = new UserInfo();
-		user.setFullName(input.getFullName());
-		user.setEmail(input.getEmail());
-		user.setRole(input.getRole());
-		user.setPassword(passEncoder.encode(input.getPassword()));
-		userRepo.save(user);
+        // Create and save the new user
+        UserInfo user = new UserInfo();
+        user.setFullName(input.getFullName());
+        user.setEmail(input.getEmail());
+        user.setRole(input.getRole());
+        user.setPassword(passEncoder.encode(input.getPassword()));
+        userRepo.save(user);
 
-		String subject = "welcome to Library Management System";
-		String text = "Dear "+ input.getFullName() + " thankyou for registering";
+        // Send email dynamically after successful registration
+        String subject = "Welcome to Our Platform!";
+        String text = "Dear " + input.getFullName() + ",\n\nThank you for registering. We are excited to have you on board!\n\nBest Regards,\nYour Company";
 
-		String host = "smtp.gmail.com"; // Example with Gmail
-		String port = "587"; // Gmail SMTP port for TLS
-		String username = "rohithparimella724@gmail.com"; // Sender's email address
-		String password = "wtsr wnev cwhs hzkq"; // Sender's email password (or app-specific password)
+        // Assuming you want to send an email from your own SMTP configuration, pass those details here
+        emailService.sendEmail(
+                "smtp.gmail.com",  // SMTP host
+                "587",              // SMTP port
+                "rohithparimella724@gmail.com", // Your email
+                "wtsr wnev cwhs hzkq",  // Your email password (or app password)  Note : This password varies from PC's
+                input.getEmail(),       // Recipient's email
+                subject,                // Subject of the email
+                text                    // Email body
+        );
 
-		// Send email
-		emailService.sendEmail(host, port, username, password, input.getEmail(), subject, text);
 
-		if ("ROLE_ADMIN".equalsIgnoreCase(input.getRole())) {
-			return "Admin registered successfully";
-		} else {
-			return "User registered successfully";
-		}
-	}
+        if ("ROLE_ADMIN".equalsIgnoreCase(input.getRole())) {
+            return "Admin registered successfully";
+        } else {
+            return "User registered successfully";
+        }
+    }
 
-	@Override
-	public UserInfo authenticate(LoginUserDto input) {
-		authManager.authenticate(new UsernamePasswordAuthenticationToken(input.getFullName(), input.getPassword()));
+    @Override
+    public UserInfo authenticate(LoginUserDto input) {
+        authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        input.getFullName(),
+                        input.getPassword()
+                )
+        );
 
-		return userRepo.findByFullName(input.getFullName()).orElseThrow();
-	}
+        return userRepo.findByFullName(input.getFullName())
+                .orElseThrow();
+    }
 
-	public List<UserInfo> allUsers() {
-		return userRepo.findAll();
-	}
+    public List<UserInfo> allUsers() {
+        return userRepo.findAll();
+    }
 }

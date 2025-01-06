@@ -16,6 +16,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "student")
 @Data
@@ -23,10 +25,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Student {
 
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Column(name = "student_id")
+//	private int sId;
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "student_id")
-	private int sId;
+	@GeneratedValue(strategy = GenerationType.AUTO)  // This will auto-generate the UUID
+	@Column(name = "student_id", columnDefinition = "uuid")
+	private UUID sId;
+
 
 	@Column(name = "name")
 	private String sname;

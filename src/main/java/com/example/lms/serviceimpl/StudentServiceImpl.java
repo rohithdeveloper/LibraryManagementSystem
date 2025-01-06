@@ -27,35 +27,7 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private CardRepository libraryCardRepository;
 
-//	@Override
-//	public StudentResponseDto addStudent(StudentRequestDto studentDto) {
-//		// Create a new Student entity and set its properties from the DTO
-//		Student student = new Student();
-//		student.setSname(studentDto.getSname());
-//		student.setSage(studentDto.getSage());
-//		student.setDepartment(studentDto.getDepartment());
-//		student.setEmail(studentDto.getEmail());
-//
-//		// Create a new LibraryCard entity and set its properties
-//		LibraryCard libraryCard = new LibraryCard();
-//		libraryCard.setStatus(CardStatus.ACTIVATED);
-//		libraryCard.setStudent(student); // Link the card with the student
-//		student.setCard(libraryCard); // Link the student with the card
-//
-//		// Save the student (and the associated library card) to the database
-//		// Ensure libraryCard is saved after student to maintain FK constraints
-//		Student savedStudent = studentRepository.save(student);
-//
-//		// Create a StudentDto to return as the response
-//		StudentResponseDto studentResponseDto = new StudentResponseDto();
-//		studentResponseDto.setSId(savedStudent.getSId());
-//		studentResponseDto.setSname(savedStudent.getSname());
-//		studentResponseDto.setDepartment(savedStudent.getDepartment());
-//		studentResponseDto.setEmail(savedStudent.getEmail());
-//		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Set card ID in response DTO
-//
-//		return studentResponseDto;
-//	}
+
 
 	@Override
 	public StudentResponseDto addStudent(StudentRequestDto studentDto) {
@@ -84,7 +56,7 @@ public class StudentServiceImpl implements StudentService {
 		studentResponseDto.setEmail(savedStudent.getEmail());
 
 		// Set card ID as UUID in response DTO (cardno is now UUID)
-		studentResponseDto.setCardId(savedStudent.getCard().getCardno()); // Get UUID from LibraryCard
+		studentResponseDto.setCardId(savedStudent.getCard().getCardNo()); // Get UUID from LibraryCard
 
 		return studentResponseDto;
 	}
@@ -119,7 +91,7 @@ public class StudentServiceImpl implements StudentService {
 			studentResponseDto.setSname(student.getSname());
 			studentResponseDto.setDepartment(student.getDepartment());
 			studentResponseDto.setEmail(student.getEmail());
-			studentResponseDto.setCardId(student.getCard().getCardno());
+			studentResponseDto.setCardId(student.getCard().getCardNo());
 
 			// Add the StudentResponseDto to the response list
 			studentResponseDtos.add(studentResponseDto);
