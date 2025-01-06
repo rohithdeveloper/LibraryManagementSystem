@@ -44,6 +44,7 @@ public class BookServiceImpl implements BookService {
             // Add the newly created book to the author's list of books
             author.getBooks().add(book);
 
+
             // Save the book entity to the database (this will generate the ID)
             bookRepo.save(book);  // Save the book to the database
 
