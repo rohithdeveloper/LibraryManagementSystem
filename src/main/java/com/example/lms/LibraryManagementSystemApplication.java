@@ -43,5 +43,9 @@ public class LibraryManagementSystemApplication implements CommandLineRunner {
 
 		log.info("Scheduling periodic book addition every 5 seconds after an initial delay of 5 seconds.");
 		bookServiceScheduler.scheduleAddBookAtFixedRate(bookRequestDto, 5, 5);
+
+		// Schedule the shutdown of the scheduler after 1 minute
+		log.info("Scheduler will shut down after 1 minute.");
+		bookServiceScheduler.scheduleShutdown(60);
 	}
 }

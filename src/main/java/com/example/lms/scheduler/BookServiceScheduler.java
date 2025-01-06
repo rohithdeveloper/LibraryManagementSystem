@@ -54,6 +54,19 @@ public class BookServiceScheduler {
     }
 
     // Gracefully shut down the scheduler
+//    public void shutdownScheduler() {
+//        scheduler.shutdown();
+//        log.info("Scheduler has been shut down.");
+//    }
+
+    // Schedule the shutdown of the scheduler after a delay
+    public void scheduleShutdown(long delayInSeconds) {
+        scheduler.schedule(() -> {
+            shutdownScheduler();
+        }, delayInSeconds, TimeUnit.SECONDS);
+    }
+
+    // Gracefully shut down the scheduler
     public void shutdownScheduler() {
         scheduler.shutdown();
         log.info("Scheduler has been shut down.");
