@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookRequestDto {
-//	private int id;
+	private int id;
 	private String title;
     private int price;
     private Genre genre;

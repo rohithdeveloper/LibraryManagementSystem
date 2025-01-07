@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import com.example.lms.repository.CardRepository;
 import com.example.lms.repository.StudentRepository;
 import com.example.lms.service.StudentService;
 
+@Slf4j
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -58,6 +60,7 @@ public class StudentServiceImpl implements StudentService {
 		// Set card ID as UUID in response DTO (cardno is now UUID)
 		studentResponseDto.setCardId(savedStudent.getCard().getCardNo()); // Get UUID from LibraryCard
 
+		log.info("Student is added  with id - {}", savedStudent.getSId().toString());
 		return studentResponseDto;
 	}
 
@@ -98,6 +101,7 @@ public class StudentServiceImpl implements StudentService {
 		}
 
 		// Return the list of StudentResponseDto
+		log.info("Here is the list of students: {}",studentResponseDtos);
 		return studentResponseDtos;
 	}
 
