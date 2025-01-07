@@ -3,6 +3,7 @@ package com.example.lms.serviceimpl;
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import com.example.lms.repository.AuthorRepository;
 import com.example.lms.repository.BookRepository;
 import com.example.lms.service.BookService;
 
-
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -28,38 +29,38 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookResponseDto addBook(BookRequestDto bookRequestDto) {
-        // Fetch the Author entity based on the ID from the BookDto
         Optional<Author> authorOptional = authorRepo.findById(bookRequestDto.getAuthorId());
         if (authorOptional.isPresent()) {
             Author author = authorOptional.get();
 
-            // Create a new Book entity and set its attributes using the data from BookDto
+            // Create a new Book entity
             Book book = new Book();
             book.setTitle(bookRequestDto.getTitle());
             book.setGenre(bookRequestDto.getGenre());
             book.setPrice(bookRequestDto.getPrice());
-            book.setIssued(false); // Initial state: Not issued
+            book.setIssued(false);
             book.setAuthor(author);
 
-            // Add the newly created book to the author's list of books
+            // Add the book to the author's list
             author.getBooks().add(book);
 
+            // Save the book to the database
+            bookRepo.save(book);
 
-            // Save the book entity to the database (this will generate the ID)
-            bookRepo.save(book);  // Save the book to the database
-
-            // Create a new BookDto for the response
+            // Create the response DTO
             BookResponseDto bookResponseDto = new BookResponseDto();
-            bookResponseDto.setId(book.getId());  // The ID will be set after saving
+            bookResponseDto.setId(book.getId());
             bookResponseDto.setTitle(book.getTitle());
             bookResponseDto.setPrice(book.getPrice());
             bookResponseDto.setGenre(book.getGenre());
 
-            // Return the BookDto representing the newly added book
+            // Log the generated book ID
+            log.info("Book added with id - {}", bookResponseDto.getId());
+
             return bookResponseDto;
         } else {
-            // Handle author not found
             throw new AuthorNotFoundException("Author not found");
         }
     }
+
 }
