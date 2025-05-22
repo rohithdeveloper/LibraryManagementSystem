@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.lms.model.UserInfo;
 
-public class UserInfoUserDetails implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
 
     /**
@@ -23,7 +23,7 @@ public class UserInfoUserDetails implements UserDetails {
 
     private List<GrantedAuthority> authorities;
 
-    public UserInfoUserDetails(UserInfo userInfo) {
+    public UserPrincipal(UserInfo userInfo) {
     	username=userInfo.getFullName();
         password=userInfo.getPassword();
         authorities= Arrays.stream(userInfo.getRole().split(","))

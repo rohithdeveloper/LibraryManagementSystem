@@ -12,7 +12,7 @@ import com.example.lms.model.UserInfo;
 import com.example.lms.repository.UserRepository;
 
 @Component
-public class UserInfoUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
@@ -20,7 +20,7 @@ public class UserInfoUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         Optional<UserInfo> user = repository.findByFullName(name);
-        return user.map(UserInfoUserDetails::new)
+        return user.map(UserPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found " + name));
            
     }

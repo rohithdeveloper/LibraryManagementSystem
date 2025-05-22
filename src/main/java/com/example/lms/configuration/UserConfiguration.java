@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.lms.repository.UserRepository;
-import com.example.lms.serviceimpl.UserInfoUserDetailsService;
 
 @Configuration
 public class UserConfiguration {
@@ -22,7 +21,7 @@ public class UserConfiguration {
 
 	@Bean
     public UserDetailsService userDetailsService() {
-        return new UserInfoUserDetailsService();
+        return new com.example.lms.serviceimpl.MyUserDetailsService();
     }
 
 	@Bean
